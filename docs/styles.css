@@ -353,6 +353,12 @@ p {
     margin-bottom: 0.5rem;
 }
 
+/* Support Section */
+.support-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 /* Contact Section */
 .contact-info {
     display: grid;
