@@ -322,14 +322,13 @@ p {
     flex-shrink: 0;
 }
 
+.step-content ul {
+    padding-left: 30px;
+}
+
 .step-content h3 {
     color: #1a202c;
     margin-bottom: 0.5rem;
-}
-
-.apply-note {
-    max-width: 800px;
-    margin: 0 auto;
 }
 
 .note-box {
@@ -417,6 +416,13 @@ p {
     margin-bottom: 0.5rem;
 }
 
+.quick-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1rem;
+    max-width: 400px;
+}
+
 .footer-section a {
     color: #cbd5e0;
     text-decoration: none;
@@ -475,6 +481,15 @@ p {
     .hero-cta {
         justify-content: center;
     }
+
+    .about-image-section img {
+        max-height: 350px;
+    }
+
+    .quick-links {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -497,6 +512,15 @@ p {
     .btn {
         padding: 10px 20px;
         font-size: 0.9rem;
+    }
+
+    .about-image-section {
+        margin: 2rem 0;
+    }
+
+    .about-image-section img {
+        max-height: 300px;
+        border-radius: 8px;
     }
 }
 
@@ -537,6 +561,7 @@ button:focus {
 .about-image-section img {
     width: 640px;
     height: 480px;
+    max-width: 100%;
     object-fit: cover;
     object-position: center;
     border-radius: 12px;
@@ -550,4 +575,8 @@ button:focus {
     margin-top: 0.75rem;
     color: #555;
     font-size: 1rem;
+}
+
+.banner {
+    text-align: center;
 }
