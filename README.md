@@ -11,6 +11,7 @@
 
 ## Python stuff
 
-Enter virtual environment --> `source venv/bin/activate`
-Exit virtual environment --> `deactivate`
+Enter virtual environment    --> `source venv/bin/activate`
+Install packages (if needed) --> `pip install -r requirements.txt`
+Exit virtual environment     --> `deactivate`
 
