@@ -44,7 +44,7 @@ def create_application_form(output_path="flier.pdf"):
     ypos += 60
 
     lines = [
-        'If you\'re a NICU nurse, NP school may be',
+        'If you\'re a NICU nurse, NNP school may be',
         'closer than you think...',
         '',
         'Scholarships are available now through',

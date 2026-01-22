@@ -9,7 +9,7 @@ def_fontsize = 10
 margin = 20
 def_font = 'helv'
 
-def create_application_form(output_path="application.pdf"):
+def create_application_form(output_path="application_form_v1.pdf"):
     doc = pymupdf.open()  # Create a new PDF document
     page = doc.new_page() # Add a new page
 
