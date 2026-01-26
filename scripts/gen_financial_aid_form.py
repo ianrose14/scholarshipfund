@@ -83,7 +83,7 @@ def main(output_path="forms/financial_aid_certification_v1.pdf"):
     xmax = r[2] - margin
     ymax = r[3] - margin
     img_rect = pymupdf.Rect(margin, margin, 60, 60)
-    page.insert_image(img_rect, filename="img/ar_logo_128.png")
+    page.insert_image(img_rect, filename="img/rose2.png")
 
     ypos = margin
 
@@ -91,7 +91,7 @@ def main(output_path="forms/financial_aid_certification_v1.pdf"):
         fontsize = def_fontsize
         h = line_height(pymupdf.Font(def_font), fontsize)
 
-        text = 'Dr. Allison Thomas Rose'
+        text = 'Dr. Allison Rose'
         text_length = pymupdf.get_text_length(text, fontname=def_font, fontsize=fontsize)
         page.insert_text((xmax - text_length, h + margin), text, fontname=def_font, fontsize=fontsize)
 
@@ -109,7 +109,7 @@ def main(output_path="forms/financial_aid_certification_v1.pdf"):
     # Header
     # --------------------
     title = "Financial Aid Certification"
-    insert_centered_text(title, page, ypos, xmax, fontsize=def_fontsize+8, underline=True)
+    insert_centered_text(title, page, ypos, xmax, fontname='Helvetica-Bold', fontsize=def_fontsize+8, underline=True)
 
     ypos = 85
 
@@ -239,7 +239,7 @@ def main(output_path="forms/financial_aid_certification_v1.pdf"):
     h = line_height(pymupdf.Font(def_font), def_fontsize - 2)
     insert_centered_text(text, page, ymax - 2*h, xmax, fontsize=def_fontsize - 2)
 
-    text = 'Dr. Allison Thomas Rose Memorial Fund | allisonrosememorialfund.org'
+    text = 'Dr. Allison Rose Memorial Fund - https://allisonrosememorialfund.org'
     h = line_height(pymupdf.Font(def_font), def_fontsize - 2)
     insert_centered_text(text, page, ymax - h, xmax, fontsize=def_fontsize - 2)
 

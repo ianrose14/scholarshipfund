@@ -17,13 +17,13 @@ def create_application_form(output_path="forms/application_form_v1.pdf"):
     xmax = r[2] - margin
     ymax = r[3] - margin
     img_rect = pymupdf.Rect(margin, margin, 60, 60)
-    page.insert_image(img_rect, filename="img/ar_logo_128.png")
+    page.insert_image(img_rect, filename="img/rose2.png")
 
     def insert_fund_name():
         fontsize = def_fontsize
         h = line_height(pymupdf.Font(def_font), fontsize)
 
-        text = 'Dr. Allison Thomas Rose'
+        text = 'Dr. Allison Rose'
         text_length = pymupdf.get_text_length(text, fontname=def_font, fontsize=fontsize)
         page.insert_text((xmax - text_length, h + margin), text, fontname=def_font, fontsize=fontsize)
 
@@ -48,7 +48,7 @@ def create_application_form(output_path="forms/application_form_v1.pdf"):
         return y + h
 
     title = 'Application Form'
-    insert_centered_text(margin, title, fontsize=def_fontsize+8, underline=True)
+    insert_centered_text(margin, title, fontname='Helvetica-Bold', fontsize=def_fontsize+8, underline=True)
 
     ypos = 90
 
@@ -161,7 +161,11 @@ def create_application_form(output_path="forms/application_form_v1.pdf"):
     xpos += text_length + 5
     page.draw_line((xpos, ypos+1), (xpos + 90, ypos+1), color=(0, 0, 0), width=1)
 
-    text = 'Dr. Allison Thomas Rose Memorial Fund | allisonrosememorialfund.org'
+    text = 'applications@allisonrosememorialfund.org'
+    h = line_height(pymupdf.Font(def_font), def_fontsize - 2)
+    insert_centered_text(ymax - 2*h, text, fontsize=def_fontsize - 2)
+
+    text = 'Dr. Allison Rose Memorial Fund - https://allisonrosememorialfund.org'
     h = line_height(pymupdf.Font(def_font), def_fontsize - 2)
     insert_centered_text(ymax - h, text, fontsize=def_fontsize - 2)
 
