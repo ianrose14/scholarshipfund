@@ -7,9 +7,9 @@ import pymupdf
 
 def_fontsize = 10
 margin = 20
-def_font = 'helv'
+def_font = 'Helvetica'
 
-def create_application_form(output_path="application_form_v1.pdf"):
+def create_application_form(output_path="forms/application_form_v1.pdf"):
     doc = pymupdf.open()  # Create a new PDF document
     page = doc.new_page() # Add a new page
 
@@ -56,7 +56,7 @@ def create_application_form(output_path="application_form_v1.pdf"):
         "  1. Please complete all sections of this form.  Typed responses are preferred.",
         "  2. Sign and date the form at the bottom.",
         "  3. Visit https://www.allisonrosememorialfund.org/apply.html to submit and view next steps.",
-        "  4. Questions?  Please contact ianrose@allisonrosememorialfund.org"
+        "  4. Questions?  Please e-mail applications@allisonrosememorialfund.org"
     ]
 
     for i, line in enumerate(lines):
@@ -112,7 +112,7 @@ def create_application_form(output_path="application_form_v1.pdf"):
         [{"name": "applying_other_field2", "size": -1}],
         [],
         [
-            {"name": "start_date_field", "label": "Intended start date", "size": 90},
+            {"name": "start_date_field", "label": "Intended start date", "size": 100},
             {"label": "          Planned enrollment status:"},
             {"name": "fulltime_field", "label": "Full-time", "size": 20, "type": pymupdf.PDF_WIDGET_TYPE_CHECKBOX, "reverse": True},
             {"name": "parttime_field", "label": "Part-time", "size": 20, "type": pymupdf.PDF_WIDGET_TYPE_CHECKBOX, "reverse": True},
@@ -159,7 +159,7 @@ def create_application_form(output_path="application_form_v1.pdf"):
     page.insert_text((xpos, ypos), text, fontname=def_font, fontsize=def_fontsize)
     text_length = pymupdf.get_text_length(text, fontname=def_font, fontsize=def_fontsize)
     xpos += text_length + 5
-    page.draw_line((xpos, ypos+1), (xpos + 80, ypos+1), color=(0, 0, 0), width=1)
+    page.draw_line((xpos, ypos+1), (xpos + 90, ypos+1), color=(0, 0, 0), width=1)
 
     text = 'Dr. Allison Thomas Rose Memorial Fund | allisonrosememorialfund.org'
     h = line_height(pymupdf.Font(def_font), def_fontsize - 2)
@@ -202,14 +202,24 @@ def insert_form_fields(rows, page, ypos, xalign=False):
                 widget.rect = pymupdf.Rect(xpos, ypos - 12, xpos + field["size"], ypos + 5)
                 widget.field_name = field["name"]
                 widget.field_type = field.get("type", pymupdf.PDF_WIDGET_TYPE_TEXT)
-                widget.fill_color = (0.9, 0.9, 1)
                 if widget.field_type == pymupdf.PDF_WIDGET_TYPE_CHECKBOX:
                     widget.text_font = 'ZaDb'
                     widget.text_fontsize = 0
+                    widget.border_color = (0, 0, 0)
+                    widget.border_width = 1
                 else:
                     widget.text_font = def_font
                     widget.text_fontsize = def_fontsize
                 page.add_widget(widget)
+
+                if widget.field_type != pymupdf.PDF_WIDGET_TYPE_CHECKBOX:
+                    page.draw_line(
+                        (xpos, ypos + 4),
+                        (xpos + field["size"], ypos + 4),
+                        color=(0.75, 0.75, 0.75),
+                        width=1
+                    )
+
                 xpos += field["size"] + 4
             if label and reverse:
                 page.insert_text((xpos, ypos), label, fontname=def_font, fontsize=def_fontsize)

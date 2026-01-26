@@ -7,7 +7,7 @@ import pymupdf
 
 def_fontsize = 14
 margin = 30
-def_font = 'helv'
+def_font = 'Helvetica'
 
 def insert_centered_text(text, page, y, xmax, fontname=def_font, fontsize=def_fontsize, underline=False, color=(0, 0, 0)):
     text_length = pymupdf.get_text_length(text, fontname=fontname, fontsize=fontsize)
@@ -19,7 +19,7 @@ def insert_centered_text(text, page, y, xmax, fontname=def_font, fontsize=def_fo
         return y + h + 1
     return y + h
 
-def create_application_form(output_path="flier.pdf"):
+def create_application_form(output_path="forms/flier.pdf"):
     doc = pymupdf.open()  # Create a new PDF document
     page = doc.new_page() # Add a new page
 
