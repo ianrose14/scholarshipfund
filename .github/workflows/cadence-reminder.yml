@@ -1,0 +1,25 @@
+name: Cadence Reminder
+
+on:
+  schedule:
+    - cron: "0 14 * * *"   # 9 or 10 AM Eastern, depending on daylight saving time
+  workflow_dispatch:       # allow manual trigger
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install resend
+
+      - name: Check cadence and send email
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: python scripts/check_cadence.py
