@@ -158,20 +158,20 @@ def main(output_path="forms/financial_aid_certification_v1.pdf"):
 
     draw_checkbox(page, margin + 300, ypos, "Estimated", "estimated")
     draw_checkbox(page, margin + 400, ypos, "Actual", "actual")
-    ypos = draw_label_and_form_field(page, margin, ypos, "Total Cost of Attendance $", 120, gap=2)
+    ypos = draw_label_and_form_field(page, margin, ypos, "Total Annual Cost of Attendance $", 120, gap=2)
     ypos = draw_label_and_form_field(page, margin, ypos, 'For which academic year?', 120)
     draw_label_and_form_field(page, margin, ypos, "Tuition / Fees $", 120, gap=2)
     ypos = draw_label_and_form_field(page, margin + 260, ypos, "Books $", 120, gap=2)
-    draw_label_and_form_field(page, margin, ypos, "Loan Fees $", 120, gap=2)
-    ypos = draw_label_and_form_field(page, margin + 260, ypos, "Room & Board $", 120, gap=2)
+    draw_label_and_form_field(page, margin, ypos, "Room & Board $", 120, gap=2)
+    ypos = draw_label_and_form_field(page, margin + 260, ypos, "Other $", 120, gap=2)
 
     ypos += 10
-    text = "1. What is the per credit tuition rate for 2024-2025 at your school?  $"
-    ypos = draw_label_and_form_field(page, margin, ypos, text, 150, gap=2)
+    #text = "1. What is the per credit tuition rate for 2024-2025 at your school?  $"
+    #ypos = draw_label_and_form_field(page, margin, ypos, text, 150, gap=2)
 
     page.insert_text(
         (margin, ypos),
-        "2. Has the student completed a FAFSA form?",
+        "1. Has the student completed a FAFSA form?",
         fontname=def_font,
         fontsize=def_fontsize
     )
@@ -181,17 +181,25 @@ def main(output_path="forms/financial_aid_certification_v1.pdf"):
 
     ypos = draw_label_and_form_field(
         page, margin, ypos,
-        "3. Student Aid Index (SAI) from FAFSA",
+        "2. Student Aid Index (SAI) from FAFSA",
         120, gap=2
     )
 
-    ypos = draw_label_and_form_field(page, margin, ypos, "4. Student ID#", 200)
+    ypos = draw_label_and_form_field(page, margin, ypos, "3. Student ID #", 200)
 
     ypos = draw_label_and_form_field(
         page, margin, ypos,
-        "5. Cumulative GPA (4.0 scale)",
+        "4. Cumulative GPA (4.0 scale)",
         200
     )
+
+    # Payment due dates
+    page.insert_text((margin, ypos), "5. Tuition payment due dates (to ensure timely disbursement):", fontname=def_font, fontsize=def_fontsize)
+    ypos += 18
+    x = margin + 10
+    draw_label_and_form_field(page, x, ypos, "Fall:", 80, gap=4)
+    draw_label_and_form_field(page, x + 130, ypos, "Spring:", 80, gap=4)
+    ypos = draw_label_and_form_field(page, x + 275, ypos, "Summer (if applicable):", 80, gap=4)
 
     # Citizenship
     page.insert_text((margin, ypos), "6. Is the student a U.S. citizen or eligible non-citizen (per FAFSA)?", fontname=def_font, fontsize=def_fontsize)
