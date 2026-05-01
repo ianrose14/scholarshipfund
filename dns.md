@@ -61,6 +61,11 @@ Gmail is configured to send from the following aliases via `smtp.gmail.com` on p
 
 These are configured under Gmail Settings → Accounts and Import → "Send mail as."
 
+### Automated emails from `Resend`
+
+A [github cronjob](https://github.com/ianrose14/scholarshipfund/blob/main/.github/workflows/cadence-reminder.yml) occasionally sends automated
+reminder emails via the `check_cadence.py` script.  This uses the [Resend](https://resend.com/) REST API to do so.
+
 ---
 
 ## Troubleshooting Notes
