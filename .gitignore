@@ -1,3 +1,12 @@
 .env
 .idea
 forms
+
+# Jekyll build outputs
+_site/
+.jekyll-cache/
+.jekyll-metadata
+
+# Bundler local state
+.bundle/
+vendor/

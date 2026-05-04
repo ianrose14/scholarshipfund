@@ -1,0 +1,12 @@
+title: Dr. Allison Rose Memorial Fund
+
+# Jekyll on GitHub Pages serves this folder as the site root.
+# Files with YAML front matter (---) are rendered through _layouts.
+# Files without front matter are passed through unchanged.
+
+# Don't try to build the project's Python venv (it lives outside /docs anyway,
+# but be explicit so nothing surprising sneaks into _site).
+exclude:
+  - venv
+  - "*.py"
+  - README.md
