@@ -8,6 +8,20 @@
 * https://unidoc.io/post/create-interactive-pdf-forms-with-golang-pdf-library/
 
 
+## Jekyll stuff
+
+install Ruby version 3.3 (specifically)
+
+```sh
+cd docs
+
+bundle install  # if necessary
+
+bundle exec jekyll serve
+
+# access webapp at localhost:4000
+```
+
 
 ## Python stuff
 
