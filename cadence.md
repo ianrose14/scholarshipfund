@@ -2,7 +2,12 @@
 
 * Prepare 990-PF Tax Document
   * When: April 20
-  * What: prepare and submit 990-PDF tax document
+  * What: Prepare and submit 990-PDF tax document to IRS
+  * Who: Ian Rose
+
+* File a copy of 990-PF to GA
+  * When: May 1
+  * What: Mail a copy of federal 990-PF to: Georgia Department of Revenue, P.O. Box 740395, Atlanta GA 30374-0395
   * Who: Ian Rose
 
 * Board Meeting for Final Decisions
