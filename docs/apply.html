@@ -2,23 +2,7 @@
 layout: default
 title: Dr. Allison Rose Memorial Fund - How To Apply
 ---
-<!-- Hero Section -->
-<section class="hero">
-    <div class="hero-container">
-        <div class="hero-content">
-            <h1 class="hero-title">Advancing NNP Training in Atlanta</h1>
-            <p class="hero-subtitle">The Dr. Allison Rose Memorial Fund provides up to $25,000 per year in
-                tuition assistance to nurses pursuing a Neonatal Nurse Practitioner degree.</p>
-            <div class="hero-cta">
-                <a href="#apply" class="btn btn-primary">Learn How to Apply</a>
-                <a href="index.html#about" class="btn btn-secondary">Learn More</a>
-            </div>
-        </div>
-        <div class="hero-image">
-            <img src="img/allison_headshot.jpg" alt="Allison Rose" class="hero-photo">
-        </div>
-    </div>
-</section>
+{% include hero.html %}
 
 <!-- How to Apply Section -->
 <section id="apply" class="section">
@@ -88,27 +72,4 @@ title: Dr. Allison Rose Memorial Fund - How To Apply
     </div>
 </section>
 
-<!-- Contact Section -->
-<section id="contact" class="section section-alt">
-    <div class="container">
-        <div class="section-header">
-            <h2>Contact Information</h2>
-            <p class="section-subtitle">Questions or Concerns? We are here to help!</p>
-        </div>
-        <div class="contact-content">
-            <div class="contact-info">
-                <div class="contact-item">
-                    <i class="fas fa-envelope"></i>
-                    <div>
-                        <p>The Dr. Allison Rose Memorial Fund, Inc. is incorporated within the state of Georgia
-                            and has applied for 501(c)(3) nonprofit status with the IRS. For any questions
-                            about the scholarship fund, please
-                            <a href="mailto:ianrose@allisonrosememorialfund.org">contact Ian Rose</a>,
-                            founder and chairman of the board of directors.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+{% include contact.html %}

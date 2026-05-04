@@ -501,6 +501,26 @@ p {
     margin-bottom: 1rem;
 }
 
+.footer-section h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.footer-section h4::before {
+    content: "";
+    width: 40px;
+    height: 2px;
+    background-color: #ced0d5;
+}
+
+.footer-section h4::after {
+    content: "";
+    flex: 1;
+    height: 2px;
+    background-color: #ced0d5;
+}
+
 .footer-section ul {
     list-style: none;
 }
@@ -514,6 +534,13 @@ p {
     grid-template-columns: 1fr 1fr;
     gap: 0.5rem 1rem;
     max-width: 400px;
+}
+
+@media (min-width: 1024px) {
+    .quick-links {
+        grid-template-columns: 1fr 1fr 1fr;
+        max-width: 600px;
+    }
 }
 
 .footer-section a {
