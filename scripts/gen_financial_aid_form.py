@@ -82,8 +82,6 @@ def main(output_path="forms/financial_aid_certification_v1.pdf"):
     r = page.bound()
     xmax = r[2] - margin
     ymax = r[3] - margin
-    img_rect = pymupdf.Rect(margin, margin, 60, 60)
-    page.insert_image(img_rect, filename="img/rose2.png")
 
     ypos = margin
 
@@ -156,9 +154,7 @@ def main(output_path="forms/financial_aid_certification_v1.pdf"):
     )
     ypos += 60
 
-    draw_checkbox(page, margin + 300, ypos, "Estimated", "estimated")
-    draw_checkbox(page, margin + 400, ypos, "Actual", "actual")
-    ypos = draw_label_and_form_field(page, margin, ypos, "Total Annual Cost of Attendance $", 120, gap=2)
+    ypos = draw_label_and_form_field(page, margin, ypos, "Total Annual Cost of Attendance (per semester, full-time) $", 140, gap=2)
     ypos = draw_label_and_form_field(page, margin, ypos, 'For which academic year?', 120)
     draw_label_and_form_field(page, margin, ypos, "Tuition / Fees $", 120, gap=2)
     ypos = draw_label_and_form_field(page, margin + 260, ypos, "Books $", 120, gap=2)
@@ -189,7 +185,7 @@ def main(output_path="forms/financial_aid_certification_v1.pdf"):
 
     ypos = draw_label_and_form_field(
         page, margin, ypos,
-        "4. Cumulative GPA (4.0 scale)",
+        "4. Cumulative GPA (for current students, 4.0 scale)",
         200
     )
 
