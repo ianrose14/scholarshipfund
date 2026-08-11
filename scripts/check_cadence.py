@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
-"""Parse cadence.md and send email reminders for today's tasks."""
+"""Parse cadence.md and open GitHub issues for today's tasks."""
 
 import os
 import re
-import sys
+import subprocess
 from datetime import datetime
-
-import resend
-
-resend.api_key = os.environ["RESEND_API_KEY"]
 
 CADENCE_FILE = os.path.join(os.path.dirname(__file__), "..", "cadence.md")
 
@@ -53,22 +49,27 @@ def tasks_for_today(tasks: list[dict]) -> list[dict]:
     return matches
 
 
-def build_html(tasks: list[dict]) -> str:
-    items = ""
-    for t in tasks:
-        items += f"<li><strong>{t['title']}</strong><br>"
-        if "what" in t:
-            items += f"What: {t['what']}<br>"
-        if "who" in t:
-            items += f"Who: {t['who']}"
-        items += "</li>\n"
-    return f"""
-<h2>Scholarship Fund Reminders for Today</h2>
-<ul>
-{items}
-</ul>
-<p><a href="https://github.com/ianrose14/scholarshipfund/blob/main/cadence.md">View full cadence</a></p>
-"""
+def build_body(task: dict) -> str:
+    lines = []
+    if "what" in task:
+        lines.append(f"**What:** {task['what']}")
+    if "who" in task:
+        lines.append(f"**Who:** {task['who']}")
+    lines.append("")
+    lines.append("[View full cadence](https://github.com/ianrose14/scholarshipfund/blob/main/cadence.md)")
+    return "\n".join(lines)
+
+
+def create_issue(title: str, body: str) -> None:
+    subprocess.run(
+        [
+            "gh", "issue", "create",
+            "--title", title,
+            "--body", body,
+            "--label", "cadence",
+        ],
+        check=True,
+    )
 
 
 def main():
@@ -79,19 +80,12 @@ def main():
         print("No cadence items for today.")
         return
 
-    print(f"Found {len(todays)} item(s) for today — sending email.")
+    print(f"Found {len(todays)} item(s) for today — creating issues.")
 
-    html = build_html(todays)
-    subject = f"Scholarship Fund Reminder — {datetime.now().strftime('%B %-d')}"
+    for task in todays:
+        create_issue(task["title"], build_body(task))
 
-    resend.Emails.send({
-        "from": "ianrose@allisonrosememorialfund.org",
-        "to": "ianrose14@gmail.com",
-        "subject": subject,
-        "html": html,
-    })
-
-    print("Email sent.")
+    print("Issue(s) created.")
 
 
 if __name__ == "__main__":

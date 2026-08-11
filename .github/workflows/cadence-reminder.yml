@@ -5,6 +5,10 @@ on:
     - cron: "0 14 * * *"   # 9 or 10 AM Eastern, depending on daylight saving time
   workflow_dispatch:       # allow manual trigger
 
+permissions:
+  issues: write
+  contents: write
+
 jobs:
   remind:
     runs-on: ubuntu-latest
@@ -16,10 +20,23 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
-        run: pip install resend
-
-      - name: Check cadence and send email
+      - name: Check cadence and create issues
         env:
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python scripts/check_cadence.py
+
+      # GitHub auto-disables `schedule` triggers after 60 days with no commits
+      # pushed to the repo (workflow runs, issues, etc. don't count). Push a
+      # trivial commit well before that if nothing else has landed recently.
+      - name: Keep schedule alive
+        run: |
+          last_commit_days=$(( ( $(date +%s) - $(git log -1 --format=%ct) ) / 86400 ))
+          echo "Last commit was $last_commit_days day(s) ago."
+          if [ "$last_commit_days" -ge 45 ]; then
+            date -u +"%Y-%m-%dT%H:%M:%SZ" > .github/.keepalive
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add .github/.keepalive
+            git commit -m "chore: keepalive commit to prevent Actions schedule auto-disable"
+            git push
+          fi
