@@ -50,6 +50,11 @@
   * What: Posted submitted 990-PF tax form for prior tax year
   * Who: Ian Rose
 
+* Look up payment deadlines
+  * When: July 25
+  * What: Lookup payment deadlines for each school
+  * Who: Ian Rose
+
 * Put up fliers
   * When: October 1
   * What: Contact people to start putting up fliers in hallways
