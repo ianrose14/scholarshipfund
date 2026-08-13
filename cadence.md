@@ -55,6 +55,11 @@
   * What: Lookup payment deadlines for each school
   * Who: Ian Rose
 
+* Consider website updates
+  * When: August 15
+  * What: Consider any website updates in preparation for fall recruitment
+  * Who: Ian Rose
+
 * Put up fliers
   * When: October 1
   * What: Contact people to start putting up fliers in hallways
