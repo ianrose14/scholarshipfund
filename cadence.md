@@ -51,12 +51,17 @@
   * Who: Ian Rose
 
 * Look up payment deadlines
-  * When: July 25
+  * When: July 15
   * What: Lookup payment deadlines for each school
   * Who: Ian Rose
 
-* Consider website updates
+* Post award recipients
   * When: August 15
+  * What: Update scholars page with headshots and bios of new recipients
+  * Who: Ian Rose
+
+* Consider website updates
+  * When: September 1
   * What: Consider any website updates in preparation for fall recruitment
   * Who: Ian Rose
 
