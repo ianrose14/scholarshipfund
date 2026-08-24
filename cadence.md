@@ -41,12 +41,12 @@
   * Who: Linda Green
 
 * Awardee Survey
-  * When: June 1
+  * When: July 1
   * What: Send survey to new awardees on their experience
   * Who: Ian Rose
 
 * Post Tax Returns to Website
-  * When: July 1
+  * When: June 1
   * What: Posted submitted 990-PF tax form for prior tax year
   * Who: Ian Rose
 

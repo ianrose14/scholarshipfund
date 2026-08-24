@@ -229,7 +229,7 @@ p {
     margin-bottom: 1rem;
 }
 
-#news, #irsforms {
+#news, #irsforms, #scholars {
     padding-top: 120px;
 }
 
@@ -384,6 +384,63 @@ p {
     margin-bottom: 1rem;
 }
 
+/* Scholars Section */
+.cohort-year {
+    color: #2c5aa0;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.cohort-year:not(:first-child) {
+    margin-top: 4rem;
+}
+
+.scholars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.scholar-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.scholar-card:hover {
+    transform: translateY(-5px);
+}
+
+.scholar-photo {
+    width: 172px;
+    height: 172px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.scholar-card h3 {
+    color: #1a202c;
+    margin-bottom: 0.25rem;
+}
+
+.scholar-program {
+    color: #2c5aa0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.scholar-card p:not(.scholar-program) {
+    color: #4a5568;
+    line-height: 1.7;
+    text-align: left;
+}
+
 /* Apply Section */
 .apply-steps {
     max-width: 800px;
@@ -495,30 +552,9 @@ p {
     margin-bottom: 2rem;
 }
 
-.footer-section h3,
-.footer-section h4 {
+.footer-section h3 {
     color: white;
     margin-bottom: 1rem;
-}
-
-.footer-section h4 {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.footer-section h4::before {
-    content: "";
-    width: 40px;
-    height: 2px;
-    background-color: #ced0d5;
-}
-
-.footer-section h4::after {
-    content: "";
-    flex: 1;
-    height: 2px;
-    background-color: #ced0d5;
 }
 
 .footer-section ul {
