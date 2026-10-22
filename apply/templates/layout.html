@@ -1,0 +1,38 @@
+{{define "layout"}}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>{{.Title}} · Dr. Allison Rose Memorial Fund</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/static/app.css">
+  <link rel="icon" href="/static/icon.png">
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a class="logo" href="https://allisonrosememorialfund.org/">Dr. Allison Rose Memorial Fund</a>
+      {{if .Email}}
+      <nav class="nav">
+        {{if .IsAdmin}}<a href="/admin">Applicants</a>{{else}}<a href="/app">My application</a>{{end}}
+        <span class="who">{{.Email}}</span>
+        <form method="post" action="/logout"><button class="link-button" type="submit">Sign out</button></form>
+      </nav>
+      {{end}}
+    </div>
+  </header>
+  <main class="container">
+    {{if .Flash}}<div class="notice notice-ok" role="status">{{.Flash}}</div>{{end}}
+    {{if .Error}}<div class="notice notice-error" role="alert">{{.Error}}</div>{{end}}
+    {{template "content" .}}
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <p>Questions? Email <a href="mailto:applications@allisonrosememorialfund.org">applications@allisonrosememorialfund.org</a></p>
+      <p><a href="https://allisonrosememorialfund.org/apply.html">How to apply</a> · <a href="https://allisonrosememorialfund.org/index.html#eligibility">Eligibility</a></p>
+    </div>
+  </footer>
+</body>
+</html>{{end}}

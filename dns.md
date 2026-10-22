@@ -42,6 +42,7 @@ The `@` records route inbound mail through ImprovMX. The `send` subdomain MX is 
 | A | `@` | `185.199.108/109/110/111.153` | GitHub Pages (website) |
 | AAAA | `@` | `2606:50c0:8000::153` | GitHub Pages IPv6 |
 | CNAME | `www` | `ianrose14.github.io.` | GitHub Pages www redirect |
+| CNAME | `apply` | `ghs.googlehosted.com.` | Application portal on Cloud Run (see `apply/README.md`) |
 
 ---
 

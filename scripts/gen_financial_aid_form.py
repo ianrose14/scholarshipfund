@@ -145,14 +145,16 @@ def main(output_path="forms/financial_aid_certification_v1.pdf"):
     )
     ypos += 20
 
-    text = "Please provide us with the most current information available at the school of nursing.  Completed forms may be emailed to applications@allisonrosememorialfund.org"
+    text = ("Please provide us with the most current information available at the school of nursing.  If the student has not "
+            "yet been admitted, please provide estimates for the program they are applying to.  Please return the completed "
+            "and signed form to the student, who will upload it with their scholarship application.")
     page.insert_textbox(
         (margin, ypos, xmax, ypos + 60),
         text,
         fontname=def_font,
         fontsize=def_fontsize
     )
-    ypos += 60
+    ypos += 72
 
     ypos = draw_label_and_form_field(page, margin, ypos, "Total Annual Cost of Attendance (per semester, full-time) $", 140, gap=2)
     ypos = draw_label_and_form_field(page, margin, ypos, 'For which academic year?', 120)
@@ -205,7 +207,7 @@ def main(output_path="forms/financial_aid_certification_v1.pdf"):
     # --------------------
     # Administrator signature
     # --------------------
-    ypos += 30
+    ypos += 18
     draw_label_and_form_field(page, margin, ypos, "FAA Name", 240)
     ypos = draw_label_and_form_field(page, 350, ypos, "Title", 100)
     ypos = draw_label_and_form_field(page, margin, ypos, "E-Mail", 280)

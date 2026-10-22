@@ -1,0 +1,67 @@
+{{define "content"}}
+{{$f := .Form}}{{$open := .Open}}
+<p><a href="/app">&larr; Back to my application</a></p>
+<h1>Application form</h1>
+<p class="muted">You can save your answers and come back later. Fields marked * are required before you can sign.</p>
+
+<form method="post" action="/app/form" class="app-form">
+<fieldset {{if not $open}}disabled{{end}}>
+
+  <h2>I. Personal information</h2>
+  <div class="grid2">
+    <label>First name *<input name="first_name" value="{{$f.FirstName}}" maxlength="100" autocomplete="given-name"></label>
+    <label>Last name *<input name="last_name" value="{{$f.LastName}}" maxlength="100" autocomplete="family-name"></label>
+  </div>
+  <label>Address *<input name="address1" value="{{$f.Address1}}" maxlength="200" autocomplete="address-line1"></label>
+  <label>Address (line 2)<input name="address2" value="{{$f.Address2}}" maxlength="200" autocomplete="address-line2"></label>
+  <div class="grid3">
+    <label>City *<input name="city" value="{{$f.City}}" maxlength="100" autocomplete="address-level2"></label>
+    <label>State *<input name="state" value="{{$f.State}}" maxlength="50" autocomplete="address-level1"></label>
+    <label>Zip code *<input name="zip" value="{{$f.Zip}}" maxlength="20" autocomplete="postal-code"></label>
+  </div>
+  <div class="grid2">
+    <label>Phone *<input name="phone" type="tel" value="{{$f.Phone}}" maxlength="40" autocomplete="tel"></label>
+    <label>Email<input value="{{.A.Email}}" disabled><span class="muted small">Your sign-in address</span></label>
+  </div>
+
+  <h2>II. Academic information</h2>
+  <label>NNP degree-granting program(s) you currently attend or are applying to for admission *
+    <input name="program" value="{{$f.Program}}" maxlength="200"></label>
+
+  <p class="label">Please choose exactly one of the following: *</p>
+  {{range .Statuses}}
+  <label class="radio"><input type="radio" name="status" value="{{.Value}}" {{if eq .Value $f.Status}}checked{{end}} {{if eq .Value "other"}}id="status-other"{{end}}> {{.Label}}</label>
+  {{end}}
+  <div class="show-if-other">
+    <label>Please explain *<textarea name="status_other" maxlength="200" rows="2">{{$f.StatusNote}}</textarea></label>
+  </div>
+
+  <div class="grid2">
+    <label>Intended start date *<input name="start_date" value="{{$f.StartDate}}" maxlength="40" placeholder="e.g. August 2027"></label>
+    <div>
+      <p class="label">Planned enrollment status *</p>
+      {{range .Enrollments}}
+      <label class="radio inline"><input type="radio" name="enrollment" value="{{.Value}}" {{if eq .Value $f.Enrollment}}checked{{end}} {{if eq .Value "parttime"}}id="enroll-parttime"{{end}}> {{.Label}}</label>
+      {{end}}
+    </div>
+  </div>
+  <div class="show-if-parttime">
+    <p class="label">Please list your anticipated course of study, including credit-hours per semester. *</p>
+    <label>Year 1<input name="parttime_year1" value="{{$f.PartTimeYear1}}" maxlength="120"></label>
+    <label>Year 2<input name="parttime_year2" value="{{$f.PartTimeYear2}}" maxlength="120"></label>
+    <label>Year 3<input name="parttime_year3" value="{{$f.PartTimeYear3}}" maxlength="120"></label>
+  </div>
+
+  <h2>Applicant certification</h2>
+  <div class="certify">
+    <label class="checkbox"><input type="checkbox" name="certify" value="1" {{if .Certify}}checked{{end}}>
+      I certify that the information provided in this application is accurate and complete to the best of my knowledge,
+      and I understand that providing false information may affect my eligibility for this scholarship.</label>
+    <label>Type your full name to sign<input name="sign_name" value="{{.SignName}}" maxlength="200" autocomplete="name"></label>
+    {{if .A.Certification}}<p class="muted small">Signed electronically by {{.A.Certification.Name}} on {{datetime .A.Certification.At}}. Saving changes will re-sign with today's date.</p>{{end}}
+  </div>
+
+  {{if $open}}<button class="btn btn-primary" type="submit">Save</button>{{end}}
+</fieldset>
+</form>
+{{end}}

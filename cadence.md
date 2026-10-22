@@ -65,6 +65,11 @@
   * What: Consider any website updates in preparation for fall recruitment
   * Who: Ian Rose
 
+* Update application form/site
+  * When: September 1
+  * What: Update `CYCLE` and `DEADLINE`, then redeploy, according to https://github.com/ianrose14/scholarshipfund/apply/README.md
+  * Who: Ian Rose
+
 * Put up fliers
   * When: October 1
   * What: Contact people to start putting up fliers in hallways

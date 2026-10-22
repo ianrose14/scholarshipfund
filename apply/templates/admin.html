@@ -1,0 +1,33 @@
+{{define "content"}}
+<div class="admin-head">
+  <h1>{{.Cycle}} applicants ({{len .Applicants}})</h1>
+  <a class="btn btn-secondary btn-small" href="/admin/applicants.csv">Download CSV</a>
+</div>
+<p class="muted">Deadline: {{deadline .Deadline}}. Files are in <a href="https://www.dropbox.com/home/Apps/Allison%20Rose%20Scholarship%20Fund%20Applications" target="_blank" rel="noopener">each applicant's Dropbox folder</a>.</p>
+<div class="table-wrap">
+<table class="admin">
+  <thead><tr>
+    <th>Applicant</th><th>Form</th><th>Statement</th><th>Resume</th><th>Financial aid</th><th>Letters</th><th>Status</th><th>Last updated</th>
+  </tr></thead>
+  <tbody>
+  {{range .Applicants}}
+  <tr>
+    <td><strong>{{.DisplayName}}</strong><br><span class="muted small">{{.Email}}</span></td>
+    <td>{{if .FormComplete}}✓{{else if .Form.FirstName}}draft{{else}}–{{end}}</td>
+    <td>{{if .Statement}}✓{{else}}–{{end}}</td>
+    <td>{{if .Resume}}✓{{else}}–{{end}}</td>
+    <td>{{if .FinancialAid}}✓{{else}}–{{end}}</td>
+    <td>
+      {{.LettersReceived}}/{{$.LettersReq}}{{if .SupervisorLetterReceived}} (incl. supervisor){{end}}
+      {{range .Recommenders}}<br><span class="muted small">{{.Name}}{{if .Supervisor}} (sup.){{end}}: {{.Status}}</span>{{end}}
+    </td>
+    <td>{{if .Complete}}<span class="tag tag-ok">Complete</span>{{else}}<span class="tag">Incomplete</span>{{end}}</td>
+    <td class="small">{{date .UpdatedAt}}</td>
+  </tr>
+  {{else}}
+  <tr><td colspan="8" class="muted">No applicants yet.</td></tr>
+  {{end}}
+  </tbody>
+</table>
+</div>
+{{end}}

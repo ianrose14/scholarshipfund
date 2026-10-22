@@ -1,0 +1,13 @@
+{{define "content"}}
+<section class="card narrow">
+  <h1>{{.Cycle}} Scholarship Application</h1>
+  <p>Enter your email address and we'll send you a link to start or continue your application. There's no password to remember.</p>
+  {{if not .Open}}<p class="muted">The deadline for {{.Cycle}} applications has passed. You can still sign in to view an existing application.</p>{{end}}
+  <form method="post" action="/login" class="stack">
+    <label for="email">Email address</label>
+    <input id="email" name="email" type="email" autocomplete="email" required autofocus>
+    <button class="btn btn-primary" type="submit">Email me a sign-in link</button>
+  </form>
+  <p class="muted small">Please use a personal email address you check regularly. Some hospital and university email systems block messages like ours.</p>
+</section>
+{{end}}

@@ -1,0 +1,9 @@
+{{define "content"}}
+<section class="card narrow">
+  <h1>Welcome!</h1>
+  <form method="post" action="/auth" class="stack">
+    <input type="hidden" name="t" value="{{.Token}}">
+    <button class="btn btn-primary" type="submit">Continue to my application</button>
+  </form>
+</section>
+{{end}}

@@ -154,12 +154,14 @@ def create_application_form(output_path="forms/application_form_v1.pdf"):
     text_length = pymupdf.get_text_length(text, fontname=def_font, fontsize=def_fontsize)
     xpos += text_length + 5
     page.draw_line((xpos, ypos+1), (xpos + 250, ypos+1), color=(0, 0, 0), width=1)
+    add_text_widget(page, "signature_field", pymupdf.Rect(xpos, ypos - 12, xpos + 250, ypos))
     xpos += 250 + 10
     text = 'Date:'
     page.insert_text((xpos, ypos), text, fontname=def_font, fontsize=def_fontsize)
     text_length = pymupdf.get_text_length(text, fontname=def_font, fontsize=def_fontsize)
     xpos += text_length + 5
     page.draw_line((xpos, ypos+1), (xpos + 90, ypos+1), color=(0, 0, 0), width=1)
+    add_text_widget(page, "date_field", pymupdf.Rect(xpos, ypos - 12, xpos + 90, ypos))
 
     text = 'applications@allisonrosememorialfund.org'
     h = line_height(pymupdf.Font(def_font), def_fontsize - 2)
@@ -233,6 +235,17 @@ def insert_form_fields(rows, page, ypos, xalign=False):
         ypos += 20
 
     return ypos
+
+def add_text_widget(page, name, rect):
+    # borderless text field sitting on top of a hand-drawn line, so the printed
+    # form looks unchanged but the field can be filled programmatically
+    widget = pymupdf.Widget()
+    widget.rect = rect
+    widget.field_name = name
+    widget.field_type = pymupdf.PDF_WIDGET_TYPE_TEXT
+    widget.text_font = def_font
+    widget.text_fontsize = def_fontsize
+    page.add_widget(widget)
 
 def line_height(font, fontsize):
     h = font.ascender - font.descender # Relative to fontsize 1

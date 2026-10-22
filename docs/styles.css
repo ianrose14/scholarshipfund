@@ -442,6 +442,17 @@ p {
 }
 
 /* Apply Section */
+.apply-cta {
+    max-width: 640px;
+    margin: 0 auto 3rem;
+    text-align: center;
+}
+
+.apply-cta p {
+    margin-top: 1rem;
+    color: #4a5568;
+}
+
 .apply-steps {
     max-width: 800px;
     margin: 0 auto 3rem;

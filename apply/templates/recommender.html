@@ -1,0 +1,41 @@
+{{define "content"}}
+{{$r := .Rec}}
+<section class="card narrow">
+  <h1>Letter of recommendation for {{.A.DisplayName}}</h1>
+  <p>Dear {{$r.Name}},</p>
+  <p>{{.A.DisplayName}} has applied for the Dr. Allison Rose Memorial Fund scholarship, which provides tuition assistance
+    to nurses pursuing a Neonatal Nurse Practitioner (NNP) degree, and has listed you as a recommender.
+    Thank you for taking the time to support their application.</p>
+  <p>Your letter is <strong>confidential</strong>: {{.A.Form.FirstName}} will be told when it has been received, but will not be able to see it.</p>
+
+  {{if eq $r.Status "received"}}
+  <div class="banner banner-done">We received your letter on {{date $r.Letter.UploadedAt}} ({{$r.Letter.OriginalName}}). Thank you!
+    {{if .Open}}If you need to, you can replace it below.{{end}}</div>
+  {{else if eq $r.Status "declined"}}
+  <div class="banner">You let us know that you're unable to write a letter. If you change your mind, you can still upload one below.</div>
+  {{end}}
+
+  {{if .Open}}
+  <h2>{{if eq $r.Status "received"}}Replace your letter{{else}}Upload your letter{{end}}</h2>
+  <p>Letters are due by <strong>{{deadline .Deadline}}</strong>.</p>
+  <form method="post" action="/r/{{.Token}}/upload" enctype="multipart/form-data" class="upload-form">
+    <input type="file" name="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+    <button class="btn btn-primary btn-small" type="submit">Upload letter</button>
+  </form>
+  <p class="muted small">PDF or Word document, up to 20 MB.</p>
+
+  {{if eq $r.Status "requested"}}
+  <details class="decline">
+    <summary class="link-button">I'm unable to write a letter</summary>
+    <form method="post" action="/r/{{.Token}}/decline">
+      <p>We'll let {{.A.Form.FirstName}} know so they can ask someone else.</p>
+      <button class="btn btn-secondary btn-small" type="submit">Confirm that I can't write a letter</button>
+    </form>
+  </details>
+  {{end}}
+  {{else}}
+  <p>The deadline for letters has passed. If you still wish to submit a letter, please email
+    <a href="mailto:applications@allisonrosememorialfund.org">applications@allisonrosememorialfund.org</a>.</p>
+  {{end}}
+</section>
+{{end}}

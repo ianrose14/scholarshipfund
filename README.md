@@ -1,5 +1,8 @@
 # scholarshipfund
 
+The public website lives in `docs/` (GitHub Pages). The application portal at
+apply.allisonrosememorialfund.org is a Go service on Cloud Run in `apply/`; see `apply/README.md`.
+
 
 
 ### References

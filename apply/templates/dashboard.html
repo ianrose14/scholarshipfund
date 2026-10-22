@@ -1,0 +1,130 @@
+{{define "content"}}
+{{$a := .A}}{{$open := .Open}}
+<h1>Your {{.Cycle}} application</h1>
+{{if not $a.Complete}}<p class="progress">{{$a.ItemsComplete}} of {{$a.ItemsTotal}} complete</p>{{end}}
+
+{{if $a.Complete}}
+<div class="banner banner-done">
+  <strong>Your application is complete.</strong> Thank you! Qualified candidates will be contacted by email to schedule an interview.
+  {{if $open}}You can still update your materials until {{deadline .Deadline}}.{{end}}
+</div>
+{{else if $open}}
+<div class="banner">
+  Applications are due by <strong>{{deadline .Deadline}}</strong>. Complete each item below; your progress is saved as you go.
+</div>
+{{else}}
+<div class="banner banner-closed">The application deadline has passed, so your application can no longer be changed.</div>
+{{end}}
+
+<ol class="checklist">
+
+  <li class="item {{if $a.FormComplete}}done{{end}}">
+    <div class="item-head">
+      <span class="check" aria-hidden="true"></span>
+      <h2>Application form</h2>
+      <span class="status">{{if $a.FormComplete}}Signed {{date $a.Certification.At}}{{else if $a.Form.FirstName}}In progress{{else}}Not started{{end}}</span>
+    </div>
+    <p>Your contact details and NNP program information.</p>
+    {{if $open}}<a class="btn {{if $a.FormComplete}}btn-secondary{{else}}btn-primary{{end}}" href="/app/form">{{if $a.FormComplete}}Review or edit{{else if $a.Form.FirstName}}Continue form{{else}}Start form{{end}}</a>
+    {{else}}<a href="/app/form">View form</a>{{end}}
+  </li>
+
+  {{template "upload" dict "Kind" "statement" "Title" "Personal statement" "Up" $a.Statement "Open" $open
+    "Desc" "Include (i) your reasons for pursuing an NNP degree, (ii) a summary of your nursing experience to date, and (iii) an explanation of your financial need. You're welcome to reuse relevant parts of a personal statement written for your school applications."}}
+
+  {{template "upload" dict "Kind" "resume" "Title" "Resume / CV" "Up" $a.Resume "Open" $open "Desc" ""}}
+
+  {{template "upload" dict "Kind" "financialaid" "Title" "Financial aid certification" "Up" $a.FinancialAid "Open" $open
+    "Desc" "Download the form below and ask the financial aid office at your NNP program to complete and sign it, then return it to you to upload here. It's fine if you haven't been admitted yet: the financial aid office of the program you're applying to can provide estimates."
+    "Link" "/static/financial_aid_certification.pdf" "LinkText" "Download the financial aid certification form (PDF)"}}
+
+  <li class="item {{if $a.LettersComplete}}done{{end}}">
+    <div class="item-head">
+      <span class="check" aria-hidden="true"></span>
+      <h2>Letters of recommendation</h2>
+      <span class="status">{{$a.LettersReceived}} of {{.LettersReq}} received</span>
+    </div>
+    <p>{{.LettersReq}} letters are required, and at least one must be from a current or recent (within the last 12 months) supervisor.
+      Add your recommenders below and we'll email each of them a personal link to upload their letter.
+      Letters are confidential: you'll see when each one arrives, but not its contents.</p>
+    {{if and (ge $a.LettersReceived .LettersReq) (not $a.SupervisorLetterReceived)}}
+    <p class="warn">None of the letters received so far is from a supervisor. Please add a current or recent supervisor.</p>
+    {{end}}
+
+    {{if $a.Recommenders}}
+    <ul class="recs">
+      {{range $a.Recommenders}}
+      <li class="rec">
+        <div class="rec-main">
+          <div>
+            <strong>{{.Name}}</strong>{{if .Supervisor}} <span class="tag">Supervisor</span>{{end}}<br>
+            <span class="muted">{{.Title}} · {{.Email}}</span>
+          </div>
+          <div class="rec-status rec-{{.Status}}">
+            {{if eq .Status "received"}}Letter received {{date .RespondedAt.UTC}}
+            {{else if eq .Status "declined"}}Unable to write a letter
+            {{else}}Requested {{date .RequestedAt}}{{end}}
+          </div>
+        </div>
+        {{if and $open (ne .Status "received")}}
+        <div class="rec-actions">
+          {{if eq .Status "requested"}}
+          <form method="post" action="/app/recommenders/{{.ID}}/resend"><button class="link-button" type="submit">Resend request</button></form>
+          {{end}}
+          <details>
+            <summary class="link-button">Edit</summary>
+            <form method="post" action="/app/recommenders/{{.ID}}" class="rec-form">
+              {{template "recfields" .}}
+              <p class="muted small">Changing the email address sends a new request; the link sent to the old address will stop working.</p>
+              <button class="btn btn-primary btn-small" type="submit">Save changes</button>
+            </form>
+          </details>
+          <form method="post" action="/app/recommenders/{{.ID}}/delete"><button class="link-button danger" type="submit">Remove</button></form>
+        </div>
+        {{end}}
+      </li>
+      {{end}}
+    </ul>
+    {{end}}
+
+    {{if and $open (lt (len $a.Recommenders) .MaxRecs)}}
+    <details class="add-rec" {{if not $a.Recommenders}}open{{end}}>
+      <summary class="btn btn-secondary btn-small">+ Add a recommender</summary>
+      <form method="post" action="/app/recommenders" class="rec-form">
+        {{template "recfields" false}}
+        <button class="btn btn-primary btn-small" type="submit">Add and send request</button>
+      </form>
+    </details>
+    {{end}}
+  </li>
+</ol>
+{{end}}
+
+{{define "recfields"}}
+<div class="grid2">
+  <label>Name<input name="name" required maxlength="100" value="{{if .}}{{.Name}}{{end}}"></label>
+  <label>Email<input name="email" type="email" required maxlength="254" value="{{if .}}{{.Email}}{{end}}"></label>
+</div>
+<label>Title / position<input name="title" required maxlength="200" placeholder="e.g. Nurse Manager, NICU" value="{{if .}}{{.Title}}{{end}}"></label>
+<label class="checkbox"><input type="checkbox" name="supervisor" value="1" {{if .}}{{if .Supervisor}}checked{{end}}{{end}}> This person is my current supervisor, or was my supervisor within the last 12 months</label>
+{{end}}
+
+{{define "upload"}}
+<li class="item {{if .Up}}done{{end}}">
+  <div class="item-head">
+    <span class="check" aria-hidden="true"></span>
+    <h2>{{.Title}}</h2>
+    <span class="status">{{if .Up}}Uploaded {{date .Up.UploadedAt}}{{else}}Not uploaded{{end}}</span>
+  </div>
+  {{if .Desc}}<p>{{.Desc}}</p>{{end}}
+  {{if .Link}}<p><a href="{{.Link}}">{{.LinkText}}</a></p>{{end}}
+  {{if .Up}}<p class="muted small">Current file: {{.Up.OriginalName}} ({{size .Up.Size}})</p>{{end}}
+  {{if .Open}}
+  <form method="post" action="/app/upload/{{.Kind}}" enctype="multipart/form-data" class="upload-form">
+    <input type="file" name="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+    <button class="btn btn-small {{if .Up}}btn-secondary{{else}}btn-primary{{end}}" type="submit">{{if .Up}}Replace{{else}}Upload{{end}}</button>
+  </form>
+  <p class="muted small">PDF or Word document, up to 20 MB.</p>
+  {{end}}
+</li>
+{{end}}
