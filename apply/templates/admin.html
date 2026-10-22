@@ -7,7 +7,7 @@
 <div class="table-wrap">
 <table class="admin">
   <thead><tr>
-    <th>Applicant</th><th>Form</th><th>Statement</th><th>Resume</th><th>Financial aid</th><th>Letters</th><th>Status</th><th>Last updated</th>
+    <th>Applicant</th><th>Form</th><th>Statement</th><th>Resume</th><th>Financial aid</th><th>Transcript</th><th>Letters</th><th>Status</th><th>Last updated</th>
   </tr></thead>
   <tbody>
   {{range .Applicants}}
@@ -17,6 +17,7 @@
     <td>{{if .Statement}}✓{{else}}–{{end}}</td>
     <td>{{if .Resume}}✓{{else}}–{{end}}</td>
     <td>{{if .FinancialAid}}✓{{else}}–{{end}}</td>
+    <td>{{if .Transcript}}✓{{else if .TranscriptRequired}}–{{else}}n/a{{end}}</td>
     <td>
       {{.LettersReceived}}/{{$.LettersReq}}{{if .SupervisorLetterReceived}} (incl. supervisor){{end}}
       {{range .Recommenders}}<br><span class="muted small">{{.Name}}{{if .Supervisor}} (sup.){{end}}: {{.Status}}</span>{{end}}
@@ -25,7 +26,7 @@
     <td class="small">{{date .UpdatedAt}}</td>
   </tr>
   {{else}}
-  <tr><td colspan="8" class="muted">No applicants yet.</td></tr>
+  <tr><td colspan="9" class="muted">No applicants yet.</td></tr>
   {{end}}
   </tbody>
 </table>

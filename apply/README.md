@@ -11,10 +11,13 @@ The "manage my application" site. Applicants sign in with an emailed magic link
    (`static/financial_aid_certification.pdf`, a copy of
    `forms/financial_aid_certification_v1.pdf`), has their school's financial aid
    office fill in and sign it, and uploads it.
-5. **Letters of recommendation**: the applicant lists recommenders (name, email,
+5. **Current NNP program transcript**, uploaded (PDF/Word). Only required (and
+   only shown) if the applicant's program status says they're already enrolled.
+6. **Letters of recommendation**: the applicant lists recommenders (name, email,
    title, supervisor?). Each recommender is emailed a personal upload link.
    Applicants see whether each letter has arrived, never its contents. Complete
-   once 2 letters are in, at least one from a supervisor.
+   once 2 letters are in, at least one from a supervisor. The page also asks for
+   at least one letter from a physician or APP, but that isn't tracked or enforced.
 
 When everything is in, the applicant and `NOTIFY_EMAILS` get an email. A daily
 cron job sends one reminder to incomplete applicants and outstanding recommenders
@@ -133,16 +136,19 @@ done
 
 ### 4. Deploy
 
-Run this from the `apply/` directory. Re-run it to deploy changes; for a new cycle, change `CYCLE` and `DEADLINE`.
+Create `apply/.env` (gitignored) with the per-cycle settings:
 
 ```sh
-gcloud run deploy apply --source . --region us-east1 --allow-unauthenticated \
-  --max-instances 2 --memory 512Mi \
-  --set-env-vars "^|^BASE_URL=https://apply.allisonrosememorialfund.org|CYCLE=2027|DEADLINE=2027-04-19T00:00:00-04:00|ADMIN_EMAILS=ianrose@allisonrosememorialfund.org|DROPBOX_APP_KEY=$DROPBOX_APP_KEY" \
-  --set-secrets "SECRET_KEY=apply-secret-key:latest,CRON_SECRET=apply-cron-secret:latest,DROPBOX_APP_SECRET=apply-dropbox-app-secret:latest,DROPBOX_REFRESH_TOKEN=apply-dropbox-refresh-token:latest,RESEND_API_KEY=apply-resend-api-key:latest"
+CYCLE=2027
+DEADLINE=2027-04-19T00:00:00-04:00
+ADMIN_EMAILS=ianrose@allisonrosememorialfund.org
+DROPBOX_APP_KEY=...
 ```
 
-(`^|^` makes `|` the separator, so values may contain commas, e.g. multiple admin emails.)
+Then run `./deploy.sh`. It loads `.env` and runs `gcloud run deploy` with those
+values plus the secrets from step 3. Re-run it to deploy changes; for a new
+cycle, change `CYCLE` and `DEADLINE` in `.env`. `ADMIN_EMAILS` may contain
+commas (multiple admins).
 
 ### 5. Custom domain
 
@@ -170,5 +176,5 @@ and each person is reminded at most once.
 
 ## Each new cycle
 
-1. Redeploy with the new `CYCLE` and `DEADLINE`. Files go to a fresh `/<CYCLE>` folder, so last year's applicants start over.
+1. Update `CYCLE` and `DEADLINE` in `.env` and run `./deploy.sh`. Files go to a fresh `/<CYCLE>` folder, so last year's applicants start over.
 2. If the PDF form changes, regenerate it (`python scripts/gen_application.py`), copy `forms/application_form_v1.pdf` to `apply/assets/application_form.pdf`, and keep the field names in `pdf.go` in sync.

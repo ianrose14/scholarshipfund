@@ -51,12 +51,11 @@ func fillApplicationPDF(a *Applicant) ([]byte, error) {
 	}
 
 	t("start_date_field", f.StartDate)
+	t("grad_date_field", f.GradDate)
 	c("fulltime_field", f.Enrollment == "fulltime")
 	c("parttime_field", f.Enrollment == "parttime")
 	if f.Enrollment == "parttime" {
-		t("parttime_details_year1_field", f.PartTimeYear1)
-		t("parttime_details_year2_field", f.PartTimeYear2)
-		t("parttime_details_year3_field", f.PartTimeYear3)
+		t("parttime_credit_hours_field", f.CreditHours)
 	}
 
 	if cert := a.Certification; cert != nil {

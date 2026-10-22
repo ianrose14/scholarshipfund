@@ -54,27 +54,28 @@ func formValue(r *http.Request, key string, max int) string {
 
 func (s *server) handleFormSave(w http.ResponseWriter, r *http.Request, a *Applicant) {
 	f := ApplicationForm{
-		FirstName:     formValue(r, "first_name", 100),
-		LastName:      formValue(r, "last_name", 100),
-		Address1:      formValue(r, "address1", 200),
-		Address2:      formValue(r, "address2", 200),
-		City:          formValue(r, "city", 100),
-		State:         formValue(r, "state", 50),
-		Zip:           formValue(r, "zip", 20),
-		Phone:         formValue(r, "phone", 40),
-		Program:       formValue(r, "program", 200),
-		Status:        formValue(r, "status", 40),
-		StatusNote:    formValue(r, "status_other", 200),
-		StartDate:     formValue(r, "start_date", 40),
-		Enrollment:    formValue(r, "enrollment", 20),
-		PartTimeYear1: formValue(r, "parttime_year1", 120),
-		PartTimeYear2: formValue(r, "parttime_year2", 120),
-		PartTimeYear3: formValue(r, "parttime_year3", 120),
+		FirstName:   formValue(r, "first_name", 100),
+		LastName:    formValue(r, "last_name", 100),
+		Address1:    formValue(r, "address1", 200),
+		Address2:    formValue(r, "address2", 200),
+		City:        formValue(r, "city", 100),
+		State:       formValue(r, "state", 50),
+		Zip:         formValue(r, "zip", 20),
+		Phone:       formValue(r, "phone", 40),
+		Program:     formValue(r, "program", 200),
+		Status:      formValue(r, "status", 40),
+		StatusNote:  formValue(r, "status_other", 200),
+		StartDate:   formValue(r, "start_date", 40),
+		GradDate:    formValue(r, "graduation_date", 40),
+		Enrollment:  formValue(r, "enrollment", 20),
+		CreditHours: formValue(r, "credit_hours", 40),
 	}
 	if f.Status != "" && !validOption(programStatuses, f.Status) {
 		f.Status = ""
 	}
-	if f.Enrollment != "" && !validOption(enrollmentOptions, f.Enrollment) {
+	if e := impliedEnrollment(f.Status); e != "" {
+		f.Enrollment = e
+	} else if f.Enrollment != "" && !validOption(enrollmentOptions, f.Enrollment) {
 		f.Enrollment = ""
 	}
 	certify := r.FormValue("certify") != ""
@@ -172,6 +173,7 @@ var uploadKinds = map[string]string{
 	"statement":    "Personal Statement",
 	"resume":       "Resume",
 	"financialaid": "Financial Aid Certification",
+	"transcript":   "NNP Program Transcript",
 }
 
 func (s *server) handleUpload(w http.ResponseWriter, r *http.Request, a *Applicant) {
@@ -200,6 +202,8 @@ func (s *server) handleUpload(w http.ResponseWriter, r *http.Request, a *Applica
 			slot = &a.Resume
 		case "financialaid":
 			slot = &a.FinancialAid
+		case "transcript":
+			slot = &a.Transcript
 		}
 		old = ""
 		if *slot != nil {

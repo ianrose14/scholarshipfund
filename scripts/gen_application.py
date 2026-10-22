@@ -112,23 +112,17 @@ def create_application_form(output_path="forms/application_form_v1.pdf"):
         [{"name": "applying_other_field2", "size": -1}],
         [],
         [
-            {"name": "start_date_field", "label": "Intended start date", "size": 100},
-            {"label": "          Planned enrollment status:"},
+            {"name": "start_date_field", "label": "Start date", "size": 100},
+            {"name": "grad_date_field", "label": "Anticipated graduation date", "size": 100},
+        ],
+        [
+            {"label": "Planned enrollment status:"},
             {"name": "fulltime_field", "label": "Full-time", "size": 20, "type": pymupdf.PDF_WIDGET_TYPE_CHECKBOX, "reverse": True},
             {"name": "parttime_field", "label": "Part-time", "size": 20, "type": pymupdf.PDF_WIDGET_TYPE_CHECKBOX, "reverse": True},
         ],
         [
-            {"label": "If part-time, please list your anticipated course of study, including credit-hours per semester."},
+            {"name": "parttime_credit_hours_field", "label": "If part-time, planned credit hours for upcoming academic year", "size": 100},
         ],
-        [
-            {"name": "parttime_details_year1_field", "size": -1},
-        ],
-        [
-            {"name": "parttime_details_year2_field", "size": -1},
-        ],
-        [
-            {"name": "parttime_details_year3_field", "size": -1},
-        ]
     ]
     ypos = insert_form_fields(rows, page, ypos)
 

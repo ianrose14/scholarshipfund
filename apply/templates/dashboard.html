@@ -38,6 +38,11 @@
     "Desc" "Download the form below and ask the financial aid office at your NNP program to complete and sign it, then return it to you to upload here. It's fine if you haven't been admitted yet: the financial aid office of the program you're applying to can provide estimates."
     "Link" "/static/financial_aid_certification.pdf" "LinkText" "Download the financial aid certification form (PDF)"}}
 
+  {{if or $a.TranscriptRequired $a.Transcript}}
+  {{template "upload" dict "Kind" "transcript" "Title" "Current NNP program transcript" "Up" $a.Transcript "Open" $open
+    "Desc" "Required because you're already enrolled in an NNP program. Your transcript should include course titles, the semester/year you took each course, and your grades."}}
+  {{end}}
+
   <li class="item {{if $a.LettersComplete}}done{{end}}">
     <div class="item-head">
       <span class="check" aria-hidden="true"></span>
@@ -45,6 +50,7 @@
       <span class="status">{{$a.LettersReceived}} of {{.LettersReq}} received</span>
     </div>
     <p>{{.LettersReq}} letters are required, and at least one must be from a current or recent (within the last 12 months) supervisor.
+      At least one letter should also come from a physician or APP (advanced practice provider, such as an NNP or PA).
       Add your recommenders below and we'll email each of them a personal link to upload their letter.
       Letters are confidential: you'll see when each one arrives, but not its contents.</p>
     {{if and (ge $a.LettersReceived .LettersReq) (not $a.SupervisorLetterReceived)}}

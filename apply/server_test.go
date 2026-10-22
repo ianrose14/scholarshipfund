@@ -13,9 +13,12 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/pdfcpu/pdfcpu/pkg/api"
 	"time"
 )
 
@@ -142,14 +145,21 @@ func (e *testEnv) linkIn(m Email) string {
 // signIn performs the full magic-link flow and returns a signed-in client.
 func (e *testEnv) signIn(email string) *http.Client {
 	e.t.Helper()
+	c, _ := e.signInWithConfirm(email)
+	return c
+}
+
+// signInWithConfirm is signIn but also returns the auth confirm page body.
+func (e *testEnv) signInWithConfirm(email string) (*http.Client, string) {
+	e.t.Helper()
 	c := e.client()
 	if code, _, _ := e.post(c, "/login", url.Values{"email": {email}}); code != 200 {
 		e.t.Fatalf("login: %d", code)
 	}
 	link := e.linkIn(e.mail.last(e.t, normalizeEmail(email), "sign-in link"))
-	code, body, _ := e.get(c, link)
-	if code != 200 || !strings.Contains(body, "Continue to my application") {
-		e.t.Fatalf("auth confirm page: %d %s", code, body)
+	code, confirm, _ := e.get(c, link)
+	if code != 200 || !strings.Contains(confirm, "my application") {
+		e.t.Fatalf("auth confirm page: %d %s", code, confirm)
 	}
 	u, _ := url.Parse(link)
 	code, _, h := e.post(c, "/auth", url.Values{"t": {u.Query().Get("t")}})
@@ -159,7 +169,7 @@ func (e *testEnv) signIn(email string) *http.Client {
 	if h.Get("Location") == "" {
 		e.t.Fatal("auth: no redirect")
 	}
-	return c
+	return c, confirm
 }
 
 func (e *testEnv) load(email string) *Applicant {
@@ -203,7 +213,11 @@ func TestFullApplicationFlow(t *testing.T) {
 		t.Fatalf("redirect to %q", h.Get("Location"))
 	}
 
-	c := e.signIn("  Jane.Doe@Example.com ") // normalized
+	c, confirm := e.signInWithConfirm("  Jane.Doe@Example.com ") // normalized
+	contains(t, confirm, "Start my application")
+	if _, confirm = e.signInWithConfirm("jane.doe@example.com"); !strings.Contains(confirm, "Continue to my application") {
+		t.Fatalf("returning applicant confirm page: %s", confirm)
+	}
 	code, body, _ := e.get(c, "/app")
 	expect(t, code, 200, body)
 	contains(t, body, "Your 2027 application", "Not started", "0 of 2 received")
@@ -232,8 +246,8 @@ func TestFullApplicationFlow(t *testing.T) {
 	// complete, signed form
 	for k, v := range map[string]string{
 		"address1": "1 Main St", "city": "Atlanta", "state": "GA", "zip": "30303", "phone": "404-555-1212",
-		"program": "Emory NNP", "status": "applying_parttime", "start_date": "Aug 2027", "enrollment": "parttime",
-		"parttime_year1": "6 credits/semester",
+		"program": "Emory NNP", "status": "applying_parttime", "start_date": "Aug 2027", "enrollment": "fulltime", // overridden by status
+		"graduation_date": "May 2030", "credit_hours": "12",
 	} {
 		form.Set(k, v)
 	}
@@ -242,6 +256,9 @@ func TestFullApplicationFlow(t *testing.T) {
 	a := e.load(me)
 	if !a.FormComplete() || a.Certification.Name != "Jane Doé" {
 		t.Fatalf("form not complete: %+v", a)
+	}
+	if a.Form.Enrollment != "parttime" {
+		t.Fatalf("enrollment not implied by status: %q", a.Form.Enrollment)
 	}
 	pdf, err := os.ReadFile(filepath.Join(e.dataDir, "2027", me, appFormFilename))
 	if err != nil || !bytes.HasPrefix(pdf, []byte("%PDF")) {
@@ -265,6 +282,27 @@ func TestFullApplicationFlow(t *testing.T) {
 	expect(t, code, http.StatusSeeOther, body)
 	code, _, _ = e.upload(c, "/app/upload/bogus", "x.pdf", fakePDF)
 	expect(t, code, 404, "")
+	code, body, _ = e.get(c, "/app")
+	expect(t, code, 200, body)
+	if strings.Contains(body, "NNP program transcript") {
+		t.Fatal("transcript shown to an applicant who isn't enrolled yet")
+	}
+
+	// already-enrolled applicants must also upload a transcript
+	form.Set("status", "enrolled_parttime")
+	code, body, _ = e.post(c, "/app/form", form)
+	expect(t, code, http.StatusSeeOther, body)
+	code, body, _ = e.get(c, "/app")
+	expect(t, code, 200, body)
+	contains(t, body, "Current NNP program transcript", "semester/year")
+	if a := e.load(me); a.ItemsTotal() != 6 || !slices.Contains(a.MissingItems(), "Current NNP program transcript") {
+		t.Fatalf("transcript not required: %d %v", a.ItemsTotal(), a.MissingItems())
+	}
+	code, body, _ = e.upload(c, "/app/upload/transcript", "transcript.pdf", fakePDF)
+	expect(t, code, http.StatusSeeOther, body)
+	if a := e.load(me); a.Transcript == nil || slices.Contains(a.MissingItems(), "Current NNP program transcript") {
+		t.Fatalf("transcript upload not recorded: %+v", a.Transcript)
+	}
 
 	// recommenders
 	addRec := func(name, email, supervisor string) string {
@@ -335,7 +373,7 @@ func TestFullApplicationFlow(t *testing.T) {
 	}
 	e.mail.last(t, me, "application is complete")
 	e.mail.last(t, "admin@example.org", "Application complete: Jane Doé")
-	for _, f := range []string{"Letter - Rita Recommender.pdf", "Letter - Sam Supervisor.docx", "Resume.pdf", "Personal Statement.pdf", "Financial Aid Certification.pdf"} {
+	for _, f := range []string{"Letter - Rita Recommender.pdf", "Letter - Sam Supervisor.docx", "Resume.pdf", "Personal Statement.pdf", "Financial Aid Certification.pdf", "NNP Program Transcript.pdf"} {
 		if _, err := os.Stat(filepath.Join(e.dataDir, "2027", me, f)); err != nil {
 			t.Errorf("missing file %s: %v", f, err)
 		}
@@ -490,5 +528,27 @@ func TestFillApplicationPDF(t *testing.T) {
 	}
 	if !bytes.HasPrefix(pdf, []byte("%PDF")) || len(pdf) < 1000 {
 		t.Fatal("output doesn't look like a PDF")
+	}
+}
+
+func TestFillApplicationPDFPartTime(t *testing.T) {
+	a := &Applicant{Email: "a@example.com", Form: ApplicationForm{FirstName: "Jane", LastName: "Doe", Status: "applying_parttime",
+		Enrollment: "parttime", StartDate: "Aug 2027", GradDate: "May 2030", CreditHours: "12"}}
+	pdf, err := fillApplicationPDF(a)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fields, err := api.FormFields(context.Background(), bytes.NewReader(pdf), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got := map[string]string{}
+	for _, f := range fields {
+		got[f.Name] = f.V
+	}
+	for name, want := range map[string]string{"grad_date_field": "May 2030", "parttime_credit_hours_field": "12"} {
+		if got[name] != want {
+			t.Errorf("%s = %q, want %q", name, got[name], want)
+		}
 	}
 }

@@ -115,7 +115,11 @@ fieldset { border: none; min-width: 0; }
 /* conditional sections, no JavaScript needed */
 .show-if-other, .show-if-parttime { display: none; margin-left: 1.6rem; }
 .app-form:has(#status-other:checked) .show-if-other,
-.app-form:has(#enroll-parttime:checked) .show-if-parttime { display: block; }
+.app-form:has(#status-enrolled_parttime:checked) .show-if-parttime,
+.app-form:has(#status-applying_parttime:checked) .show-if-parttime,
+.app-form:has(#status-other:checked):has(#enroll-parttime:checked) .show-if-parttime { display: block; }
+.app-form .label-sign, .app-form:has(#certify:checked) .label-draft { display: none; }
+.app-form:has(#certify:checked) .label-sign { display: inline; }
 
 /* checklist */
 h1 + .progress { margin-top: -0.6rem; }

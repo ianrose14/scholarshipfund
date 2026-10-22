@@ -67,7 +67,7 @@
 
 * Update application form/site
   * When: September 1
-  * What: Update `CYCLE` and `DEADLINE`, then redeploy, according to https://github.com/ianrose14/scholarshipfund/apply/README.md
+  * What: Update `CYCLE` and `DEADLINE`, then redeploy, according to https://github.com/ianrose14/scholarshipfund/blob/main/apply/README.md
   * Who: Ian Rose
 
 * Put up fliers

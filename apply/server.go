@@ -210,18 +210,19 @@ type pageData struct {
 	NoNav    bool // hide the signed-in navigation
 
 	// page-specific
-	A           *Applicant
-	Form        ApplicationForm
-	Certify     bool
-	SignName    string
-	Statuses    []option
-	Enrollments []option
-	Rec         *Recommender
-	Token       string
-	Applicants  []*Applicant
-	Message     string
-	MaxRecs     int
-	LettersReq  int
+	A            *Applicant
+	Form         ApplicationForm
+	Certify      bool
+	SignName     string
+	Statuses     []option
+	Enrollments  []option
+	Rec          *Recommender
+	Token        string
+	NewApplicant bool
+	Applicants   []*Applicant
+	Message      string
+	MaxRecs      int
+	LettersReq   int
 }
 
 var flashMessages = map[string]string{

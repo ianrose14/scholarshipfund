@@ -34,9 +34,9 @@ func (s *server) handleAdminCSV(w http.ResponseWriter, r *http.Request) {
 	cw := csv.NewWriter(w)
 	cw.Write([]string{
 		"Last name", "First name", "Email", "Phone", "Address", "Address 2", "City", "State", "Zip",
-		"Program", "Program status", "Status explanation", "Start date", "Enrollment",
-		"Part-time year 1", "Part-time year 2", "Part-time year 3",
-		"Form signed", "Personal statement", "Resume", "Financial aid", "Letters received", "Supervisor letter",
+		"Program", "Program status", "Status explanation", "Start date", "Anticipated graduation date", "Enrollment",
+		"Planned credit hours (part-time)",
+		"Form signed", "Personal statement", "Resume", "Financial aid", "Transcript", "Letters received", "Supervisor letter",
 		"Recommenders", "Complete", "Completed at", "Created at", "Last updated",
 	})
 	yes := func(b bool) string {
@@ -44,6 +44,12 @@ func (s *server) handleAdminCSV(w http.ResponseWriter, r *http.Request) {
 			return "yes"
 		}
 		return "no"
+	}
+	transcript := func(a *Applicant) string {
+		if a.Transcript == nil && !a.TranscriptRequired() {
+			return "n/a"
+		}
+		return yes(a.Transcript != nil)
 	}
 	ts := func(t *time.Time) string {
 		if t == nil {
@@ -63,9 +69,10 @@ func (s *server) handleAdminCSV(w http.ResponseWriter, r *http.Request) {
 		}
 		cw.Write([]string{
 			f.LastName, f.FirstName, a.Email, f.Phone, f.Address1, f.Address2, f.City, f.State, f.Zip,
-			f.Program, f.Status, f.StatusNote, f.StartDate, f.Enrollment,
-			f.PartTimeYear1, f.PartTimeYear2, f.PartTimeYear3,
+			f.Program, f.Status, f.StatusNote, f.StartDate, f.GradDate, f.Enrollment,
+			f.CreditHours,
 			yes(a.Certification != nil), yes(a.Statement != nil), yes(a.Resume != nil), yes(a.FinancialAid != nil),
+			transcript(a),
 			strconv.Itoa(a.LettersReceived()), yes(a.SupervisorLetterReceived()),
 			strings.Join(recs, "; "), yes(a.Complete()), ts(a.CompletedAt), ts(&a.CreatedAt), ts(&a.UpdatedAt),
 		})

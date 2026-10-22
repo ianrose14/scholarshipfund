@@ -19,6 +19,7 @@ type Applicant struct {
 	Statement    *Upload `json:"personal_statement,omitempty"`
 	Resume       *Upload `json:"resume,omitempty"`
 	FinancialAid *Upload `json:"financial_aid_certification,omitempty"`
+	Transcript   *Upload `json:"transcript,omitempty"` // only required if already enrolled
 
 	Recommenders []*Recommender `json:"recommenders"`
 
@@ -40,11 +41,10 @@ type ApplicationForm struct {
 	Status     string `json:"status"` // one of programStatuses
 	StatusNote string `json:"status_other"`
 	StartDate  string `json:"start_date"`
+	GradDate   string `json:"graduation_date"`
 	Enrollment string `json:"enrollment"` // "fulltime" or "parttime"
 
-	PartTimeYear1 string `json:"parttime_year1"`
-	PartTimeYear2 string `json:"parttime_year2"`
-	PartTimeYear3 string `json:"parttime_year3"`
+	CreditHours string `json:"parttime_credit_hours"` // planned for the upcoming academic year
 }
 
 type option struct{ Value, Label string }
@@ -58,6 +58,18 @@ var programStatuses = []option{
 }
 
 var enrollmentOptions = []option{{"fulltime", "Full-time"}, {"parttime", "Part-time"}}
+
+// impliedEnrollment returns the enrollment ("fulltime" or "parttime") implied
+// by a program status, or "" for "other", where we have to ask separately.
+func impliedEnrollment(status string) string {
+	switch {
+	case strings.HasSuffix(status, "_fulltime"):
+		return "fulltime"
+	case strings.HasSuffix(status, "_parttime"):
+		return "parttime"
+	}
+	return ""
+}
 
 func validOption(opts []option, v string) bool {
 	for _, o := range opts {
@@ -138,10 +150,11 @@ func (a *Applicant) FormMissing() []string {
 	if f.Status == "other" {
 		req(f.StatusNote, "Program status explanation")
 	}
-	req(f.StartDate, "Intended start date")
+	req(f.StartDate, "Start date")
+	req(f.GradDate, "Anticipated graduation date")
 	req(f.Enrollment, "Planned enrollment status")
 	if f.Enrollment == "parttime" {
-		req(f.PartTimeYear1, "Part-time course of study")
+		req(f.CreditHours, "Planned credit hours")
 	}
 	return missing
 }
@@ -173,17 +186,30 @@ func (a *Applicant) LettersComplete() bool {
 	return a.LettersReceived() >= lettersRequired && a.SupervisorLetterReceived()
 }
 
-func (a *Applicant) Complete() bool {
-	return a.FormComplete() && a.Statement != nil && a.Resume != nil && a.FinancialAid != nil && a.LettersComplete()
+// TranscriptRequired reports whether the applicant must upload a transcript
+// from their current NNP program, i.e. they're already enrolled in one.
+func (a *Applicant) TranscriptRequired() bool {
+	return a.Form.Status == "enrolled_fulltime" || a.Form.Status == "enrolled_parttime"
 }
 
-// checklistItems is the number of items on the applicant's dashboard checklist.
-const checklistItems = 5
+// checklist returns the done-ness of each required item on the applicant's
+// dashboard checklist.
+func (a *Applicant) checklist() []bool {
+	items := []bool{a.FormComplete(), a.Statement != nil, a.Resume != nil, a.FinancialAid != nil}
+	if a.TranscriptRequired() {
+		items = append(items, a.Transcript != nil)
+	}
+	return append(items, a.LettersComplete())
+}
 
-// ItemsComplete counts how many of the checklistItems are done.
+func (a *Applicant) Complete() bool {
+	return a.ItemsComplete() == a.ItemsTotal()
+}
+
+// ItemsComplete counts how many of the checklist items are done.
 func (a *Applicant) ItemsComplete() int {
 	n := 0
-	for _, done := range []bool{a.FormComplete(), a.Statement != nil, a.Resume != nil, a.FinancialAid != nil, a.LettersComplete()} {
+	for _, done := range a.checklist() {
 		if done {
 			n++
 		}
@@ -191,7 +217,7 @@ func (a *Applicant) ItemsComplete() int {
 	return n
 }
 
-func (a *Applicant) ItemsTotal() int { return checklistItems }
+func (a *Applicant) ItemsTotal() int { return len(a.checklist()) }
 
 // MissingItems is a human-readable list of what's outstanding, used in emails
 // and the admin page.
@@ -208,6 +234,9 @@ func (a *Applicant) MissingItems() []string {
 	}
 	if a.FinancialAid == nil {
 		out = append(out, "Financial aid certification")
+	}
+	if a.TranscriptRequired() && a.Transcript == nil {
+		out = append(out, "Current NNP program transcript")
 	}
 	if n := a.LettersReceived(); n < lettersRequired {
 		out = append(out, fmt.Sprintf("Letters of recommendation (%d of %d received)", n, lettersRequired))

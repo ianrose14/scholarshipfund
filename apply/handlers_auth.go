@@ -57,11 +57,19 @@ func (s *server) handleLogin(w http.ResponseWriter, r *http.Request) {
 // must not be what establishes the session.
 func (s *server) handleAuthConfirm(w http.ResponseWriter, r *http.Request) {
 	tok := r.URL.Query().Get("t")
-	if _, err := s.tokens.verify(tok, kindLogin, s.now()); err != nil {
+	c, err := s.tokens.verify(tok, kindLogin, s.now())
+	if err != nil {
 		s.render(w, r, "login", http.StatusBadRequest, pageData{Title: "Sign in", Error: "That sign-in link is invalid or has expired. Please request a new one."})
 		return
 	}
-	s.render(w, r, "auth_confirm", http.StatusOK, pageData{Title: "Sign in", Token: tok})
+	// The applicant record isn't created until they click through, so a
+	// missing record means this is their first sign-in.
+	isNew := false
+	if !s.isAdmin(c.Email) {
+		_, _, err := s.store.Load(r.Context(), c.Email)
+		isNew = errors.Is(err, errNotFound)
+	}
+	s.render(w, r, "auth_confirm", http.StatusOK, pageData{Title: "Sign in", Token: tok, NewApplicant: isNew})
 }
 
 func (s *server) handleAuth(w http.ResponseWriter, r *http.Request) {
